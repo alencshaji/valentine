@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💝 Will You Be My Valentine?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Page 1 Styles */
+        .question-page {
+            text-align: center;
+            background: white;
+            padding: 60px 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            position: relative;
+        }
+
+        .hearts {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 60px;
+        }
+
+        h1 {
+            color: #e74c3c;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            color: #555;
+            font-size: 1.2em;
+            margin-bottom: 40px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-yes:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-no {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #333;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        /* Page 2 Styles */
+        .gifts-page {
+            text-align: center;
+            padding: 40px;
+            max-width: 1000px;
+        }
+
+        .gifts-title {
+            color: white;
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .gifts-subtitle {
+            color: #ffeaa7;
+            font-size: 1.3em;
+            margin-bottom: 50px;
+        }
+
+        .gifts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        /* Page 3 Styles */
+        .tickets-page {
+            text-align: center;
+            padding: 40px;
+            max-width: 1000px;
+        }
+
+        .gift-box {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gift-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.3) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .gift-box:hover::before {
+            opacity: 1;
+        }
+
+        .gift-box:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .gift-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .gift-title {
+            color: #e74c3c;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            font-weight: bold;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .gift-message {
+            color: #555;
+            font-size: 1.1em;
+            line-height: 1.6;
+            font-style: italic;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .gift-box.opened .gift-title,
+        .gift-box.opened .gift-message {
+            display: block;
+            opacity: 1;
+        }
+
+        .gift-box.opened .gift-icon {
+            animation: none;
+        }
+
+        .opened {
+            animation: openGift 0.6s ease;
+        }
+
+        @keyframes openGift {
+            0% {
+                transform: scale(1) rotateY(0deg);
+            }
+
+            50% {
+                transform: scale(1.1) rotateY(180deg);
+            }
+
+            100% {
+                transform: scale(1) rotateY(360deg);
+            }
+        }
+
+        /* Floating hearts animation */
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 30px;
+            animation: float 4s infinite ease-in-out;
+            opacity: 0.7;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.7;
+            }
+
+            90% {
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Quiz Modal */
+        .quiz-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .quiz-modal.active {
+            display: flex;
+        }
+
+        .quiz-content {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 25px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: scaleIn 0.4s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .quiz-question {
+            color: #e74c3c;
+            font-size: 1.8em;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .quiz-option {
+            padding: 18px 30px;
+            font-size: 1.1em;
+            border: 3px solid #f093fb;
+            background: white;
+            color: #333;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .quiz-option:hover {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .quiz-option.wrong {
+            animation: shake 0.5s ease;
+            background: #ffebee;
+            border-color: #e74c3c;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-10px);
+            }
+
+            75% {
+                transform: translateX(10px);
+            }
+        }
+
+        .quiz-option.correct {
+            animation: pulse 0.5s ease;
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            color: white;
+            border-color: #22c55e;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .ticket {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            width: 280px;
+            border: 4px dashed #ff6b6b;
+        }
+
+        .ticket::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.4) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .ticket:hover::before {
+            opacity: 1;
+        }
+
+        .ticket:hover {
+            transform: translateY(-10px) scale(1.05) rotate(2deg);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .ticket-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+            animation: swing 2s infinite ease-in-out;
+        }
+
+        @keyframes swing {
+
+            0%,
+            100% {
+                transform: rotate(-5deg);
+            }
+
+            50% {
+                transform: rotate(5deg);
+            }
+        }
+
+        .ticket-label {
+            color: #d63031;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .ticket-content {
+            color: #2d3436;
+            font-size: 1.1em;
+            line-height: 1.6;
+            font-weight: 600;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .ticket.revealed .ticket-content {
+            display: block;
+            opacity: 1;
+        }
+
+        .ticket.revealed .ticket-icon {
+            animation: none;
+            font-size: 3em;
+        }
+
+        .ticket-number {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: #d63031;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .gifts-title {
+                font-size: 2em;
+            }
+
+            .gifts-container {
+                grid-template-columns: 1fr;
+            }
+
+            .quiz-content {
+                padding: 40px 25px;
+            }
+
+            .quiz-question {
+                font-size: 1.4em;
+            }
+
+            .tickets-title {
+                font-size: 2em;
+            }
+
+            .tickets-container {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Floating Hearts Background -->
+    <div class="floating-hearts" id="floatingHearts"></div>
+
+    <!-- Page 1: Question -->
+    <div class="page active" id="page1">
+        <div class="question-page">
+            <div class="hearts">💕</div>
+            <h1>Jiya, Will You Be My Valentine?</h1>
+            <p class="subtitle">I've been wanting to ask you this special question...</p>
+            <div class="buttons">
+                <button class="btn btn-yes" onclick="goToGifts()">Yes! 💖</button>
+                <button class="btn btn-no" id="noBtn" onmouseover="moveButton()" onclick="moveButton()">No</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 2: Gifts -->
+    <div class="page" id="page2">
+        <div class="gifts-page">
+            <h1 class="gifts-title">💝 Here's My Heart for You, Jiya 💝</h1>
+            <p class="gifts-subtitle">Answer the questions to unlock each special gift...</p>
+
+            <div class="gifts-container">
+                <div class="gift-box" data-quiz="0" onclick="openGift(this)">
+                    <div class="gift-icon">🎁</div>
+                    <h3 class="gift-title">Our First Memory</h3>
+                    <p class="gift-message">
+                        "From the moment I first saw your smile, I knew you were someone extraordinary.
+                        The way your eyes light up when you laugh makes my heart skip a beat every single time.
+                        You turned an ordinary day into the beginning of something beautiful."
+                    </p>
+                </div>
+
+                <div class="gift-box" data-quiz="1" onclick="openGift(this)">
+                    <div class="gift-icon">💝</div>
+                    <h3 class="gift-title">What You Mean to Me</h3>
+                    <p class="gift-message">
+                        "You're not just my Valentine, you're my safe place, my happy thought, my favorite hello and
+                        hardest goodbye.
+                        Every moment with you feels like a dream I never want to wake up from.
+                        You make the world brighter just by being in it."
+                    </p>
+                </div>
+
+                <div class="gift-box" data-quiz="2" onclick="openGift(this)">
+                    <div class="gift-icon">🌹</div>
+                    <h3 class="gift-title">Forever Promise</h3>
+                    <p class="gift-message">
+                        "I promise to cherish every laugh, every conversation, every shared silence.
+                        To hold your hand through storms and celebrate every sunshine.
+                        With you, I've found my forever person, and I can't wait to create a million more beautiful
+                        memories together."
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 3: Tickets -->
+    <div class="page" id="page3">
+        <div class="tickets-page">
+            <h1 class="gifts-title">🎟️ Special Surprise for You, Jiya! 🎟️</h1>
+            <p class="gifts-subtitle">Pick one ticket to reveal your amazing gift!</p>
+
+            <div class="tickets-container"
+                style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-top: 40px;">
+                <div class="ticket" onclick="revealTicket(this, 'dress')">
+                    <div class="ticket-number">TICKET #1</div>
+                    <div class="ticket-icon">🎫</div>
+                    <h3 class="ticket-label">Mystery Gift</h3>
+                    <p class="ticket-content">
+                        👗 A Beautiful Dress Shopping! 👗<br><br>
+                        Let's go shopping together and I'll buy you that gorgeous dress you've been eyeing!
+                        Your happiness is my priority. Pick any dress that makes you feel amazing! 💕
+                    </p>
+                </div>
+
+                <div class="ticket" onclick="revealTicket(this, 'food')">
+                    <div class="ticket-number">TICKET #2</div>
+                    <div class="ticket-icon">🎫</div>
+                    <h3 class="ticket-label">Mystery Gift</h3>
+                    <p class="ticket-content">
+                        🍽️ A Special Dinner Date! 🍽️<br><br>
+                        Your favorite restaurant awaits! Let's have a romantic dinner together.
+                        Order anything your heart desires - tonight is all about you! 🥘✨
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Modal -->
+    <div class="quiz-modal" id="quizModal">
+        <div class="quiz-content">
+            <h2 class="quiz-question" id="quizQuestion"></h2>
+            <div class="quiz-options" id="quizOptions"></div>
+        </div>
+    </div>
+
+    <script>
+        // Create floating hearts
+        function createFloatingHearts() {
+            const container = document.getElementById('floatingHearts');
+            const heartSymbols = ['❤️', '💕', '💖', '💗', '💓', '💝'];
+
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                heart.style.animationDelay = Math.random() * 2 + 's';
+                container.appendChild(heart);
+
+                setTimeout(() => {
+                    heart.remove();
+                }, 6000);
+            }, 800);
+        }
+
+        createFloatingHearts();
+
+        // Move "No" button
+        function moveButton() {
+            const btn = document.getElementById('noBtn');
+            const maxX = window.innerWidth - btn.offsetWidth - 100;
+            const maxY = window.innerHeight - btn.offsetHeight - 100;
+
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+
+            btn.style.position = 'fixed';
+            btn.style.left = randomX + 'px';
+            btn.style.top = randomY + 'px';
+            btn.style.transition = 'all 0.3s ease';
+        }
+
+        // Go to gifts page
+        function goToGifts() {
+            document.getElementById('page1').classList.remove('active');
+            document.getElementById('page2').classList.add('active');
+        }
+
+        // Quiz data
+        const quizData = [
+            {
+                question: "When did our relationship start? 💕",
+                options: ["March 15, 2023", "April 11, 2023", "May 20, 2023"],
+                correct: 1
+            },
+            {
+                question: "What do I call you? 😊",
+                options: ["Sweetheart", "Jiya", "Kujappi"],
+                correct: 2
+            },
+            {
+                question: "What's our dream trip? ✈️",
+                options: ["Paris", "Switzerland", "Maldives"],
+                correct: 1
+            }
+        ];
+
+        let currentGiftBox = null;
+
+        // Open gift with quiz
+        function openGift(element) {
+            if (element.classList.contains('opened')) {
+                return;
+            }
+
+            currentGiftBox = element;
+            const quizIndex = parseInt(element.getAttribute('data-quiz'));
+            showQuiz(quizIndex);
+        }
+
+        // Show quiz modal
+        function showQuiz(index) {
+            const quiz = quizData[index];
+            const modal = document.getElementById('quizModal');
+            const questionEl = document.getElementById('quizQuestion');
+            const optionsEl = document.getElementById('quizOptions');
+
+            questionEl.textContent = quiz.question;
+            optionsEl.innerHTML = '';
+
+            quiz.options.forEach((option, i) => {
+                const button = document.createElement('button');
+                button.className = 'quiz-option';
+                button.textContent = option;
+                button.onclick = () => checkAnswer(i, quiz.correct);
+                optionsEl.appendChild(button);
+            });
+
+            modal.classList.add('active');
+        }
+
+        // Check answer
+        function checkAnswer(selected, correct) {
+            const buttons = document.querySelectorAll('.quiz-option');
+
+            if (selected === correct) {
+                buttons[selected].classList.add('correct');
+
+                setTimeout(() => {
+                    currentGiftBox.classList.add('opened');
+                    document.getElementById('quizModal').classList.remove('active');
+
+                    // Reset buttons
+                    buttons.forEach(btn => {
+                        btn.classList.remove('correct', 'wrong');
+                    });
+
+                    // Check if all gifts are opened
+                    checkAllGiftsOpened();
+                }, 1000);
+            } else {
+                buttons[selected].classList.add('wrong');
+
+                setTimeout(() => {
+                    buttons[selected].classList.remove('wrong');
+                }, 500);
+            }
+        }
+
+        // Check if all gifts are opened
+        function checkAllGiftsOpened() {
+            const allGifts = document.querySelectorAll('.gift-box');
+            const openedGifts = document.querySelectorAll('.gift-box.opened');
+
+            if (allGifts.length === openedGifts.length) {
+                // All gifts opened, go to tickets page
+                setTimeout(() => {
+                    randomizeTickets();
+                    document.getElementById('page2').classList.remove('active');
+                    document.getElementById('page3').classList.add('active');
+                }, 1500);
+            }
+        }
+
+        // Randomize ticket order
+        function randomizeTickets() {
+            const container = document.querySelector('.tickets-container');
+            const tickets = Array.from(container.children);
+
+            // Shuffle tickets
+            if (Math.random() > 0.5) {
+                tickets.reverse();
+            }
+
+            // Re-append in new order
+            tickets.forEach(ticket => container.appendChild(ticket));
+        }
+
+        // Reveal ticket
+        function revealTicket(element, type) {
+            if (element.classList.contains('revealed')) {
+                return;
+            }
+
+            // Hide all other tickets
+            const allTickets = document.querySelectorAll('.ticket');
+            allTickets.forEach(ticket => {
+                if (ticket !== element) {
+                    ticket.style.opacity = '0.3';
+                    ticket.style.pointerEvents = 'none';
+                }
+            });
+
+            // Reveal selected ticket
+            element.classList.add('revealed');
+
+            // Celebration animation
+            setTimeout(() => {
+                const celebration = document.createElement('div');
+                celebration.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    font-size: 5em;
+                    z-index: 2000;
+                    animation: celebrationPop 1s ease;
+                `;
+                celebration.textContent = type === 'dress' ? '👗✨' : '🍽️✨';
+                document.body.appendChild(celebration);
+
+                setTimeout(() => {
+                    celebration.remove();
+                }, 1000);
+            }, 300);
+        }
+
+        // Add celebration animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes celebrationPop {
+                0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+                50% { transform: translate(-50%, -50%) scale(1.5); opacity: 1; }
+                100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+
+</html>
