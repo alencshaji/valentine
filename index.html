@@ -19,7 +19,7 @@
             justify-content: center;
             align-items: center;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
         .page {
@@ -118,6 +118,8 @@
             padding: 40px 20px;
             max-width: 1000px;
             width: 100%;
+            max-height: 100vh;
+            overflow-y: auto;
         }
 
         .gifts-title {
@@ -146,6 +148,8 @@
             padding: 40px 20px;
             max-width: 1000px;
             width: 100%;
+            max-height: 100vh;
+            overflow-y: auto;
         }
 
         .gift-box {
@@ -775,8 +779,8 @@
     </div>
 
     <!-- Quiz Modal -->
-    <div class="quiz-modal" id="quizModal">
-        <div class="quiz-content">
+    <div class="quiz-modal" id="quizModal" onclick="closeQuizModal(event)">
+        <div class="quiz-content" onclick="event.stopPropagation()">
             <h2 class="quiz-question" id="quizQuestion"></h2>
             <div class="quiz-options" id="quizOptions"></div>
         </div>
@@ -877,6 +881,14 @@
             });
 
             modal.classList.add('active');
+        }
+
+        // Close quiz modal when clicking outside
+        function closeQuizModal(event) {
+            if (event.target.id === 'quizModal') {
+                document.getElementById('quizModal').classList.remove('active');
+                currentGiftBox = null;
+            }
         }
 
         // Check answer
